@@ -54,7 +54,11 @@ function init() {
 		canvas.bind('mouseup', stopDrawing);
 		canvas.bind('mousemove', doDrawing);
 
+		canvas.attr('width', document.width);
+		canvas.attr('height', document.height);
+
 		ctxt = canvas[0].getContext('2d');
+		ctxt.lineWidth = 10;
 }
 
 function startDrawing(event) {
@@ -88,8 +92,11 @@ function doDrawing(event) {
 		var y = event.clientY;
 
 		path.push([x, y]);
-		ctxt.strokeStyle = 'hsl(' + myHue + ',100%,50%)';
+
 		if(lastPoint !== null) {
+
+				ctxt.strokeStyle = 'hsl(' + myHue + ',100%,50%)';
+
 				ctxt.beginPath();
 				ctxt.moveTo(lastPoint.x, lastPoint.y);
 				ctxt.lineTo(x, y);
