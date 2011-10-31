@@ -1,14 +1,19 @@
+var socket = null;
+
+// Booléen valant vrai quand un tracé est en cours.
 var drawing = false;
 
+// Dernière position visitée par le curseur.
 var lastPoint = null;
 
 var canvas = null;
 var ctxt = null;
 
+// Teinte locale.
 var myHue = null;
-var otherHues = {};
 
-var socket = null;
+// Teintes de tous les autres clients.
+var otherHues = {};
 
 function init() {
 
@@ -36,7 +41,7 @@ function init() {
 
 		  var userId = data.id;
 
-		  delete hues[userId];
+		  delete otherHues[userId];
 
 		  console.log('User ' + userId + ' leaved');
 	 });
@@ -82,21 +87,18 @@ function doDrawing(event) {
 
 	 var currentPoint = {x: event.clientX, y: event.clientY};
 
-	 if(lastPoint !== null) {
+	 var path = [
+		  [lastPoint.x, lastPoint.y],
+		  [currentPoint.x, currentPoint.y]
+	 ];
 
-		  var path = [
-				[lastPoint.x, lastPoint.y],
-				[currentPoint.x, currentPoint.y]
-		  ];
+	 // Dessine le tracé.
+	 draw(path, myHue);
 
-		  // Dessine le tracé.
-		  draw(path, myHue);
-
-		  // Envoie le tracé aux autres clients.
-		  socket.emit('user draws', {
-				path: path
-		  });
-	 }
+	 // Envoie le tracé aux autres clients.
+	 socket.emit('user draws', {
+		  path: path
+	 });
 
 	 lastPoint = currentPoint;
 }
@@ -104,14 +106,12 @@ function doDrawing(event) {
 function draw(path, hue) {
 
 	 ctxt.strokeStyle = 'hsl(' + hue + ',60%,50%)';
-	 console.log(hue);
 
 	 ctxt.beginPath();
 	 ctxt.moveTo(path[0][0], path[0][1]);
 
 	 for(var i = 1; i < path.length; ++i)
 		  ctxt.lineTo(path[i][0], path[i][1]);
-
 
 	 ctxt.stroke();
 }

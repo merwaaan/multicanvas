@@ -30,8 +30,11 @@ io.sockets.on('connection', function(socket) {
 				hue: hue
 		});
 
-		socket.on('user leaves', function(data) {
+		socket.on('disconnect', function(data) {
 
+			 socket.broadcast.emit('user leaves', {
+				  id: socket.id
+			 });
 		});
 
 		socket.on('user draws', function(data) {
