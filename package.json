@@ -1,0 +1,23 @@
+{
+	"name": "multicanvas",
+	"version": "1.0.0",
+	"description": "Multi-user canvas drawing using WebSocket",
+	"author": "Merwan Achibet",
+	"contributors": {
+		"name": "fmdkdd"
+	},
+
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/merwaaan/multicanvas.git"
+	},
+
+	"engines": {
+		"node": "*"
+	},
+
+	"dependencies": {
+		"express": "2.x",
+		"socket.io": "0.8.x"
+	}
+}
