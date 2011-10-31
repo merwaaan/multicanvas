@@ -54,8 +54,12 @@ function init() {
 	 });
 
 	 canvas = $('canvas');
-	 canvas.attr('width', document.width);
-	 canvas.attr('height', document.height);
+
+	 $(window).resize(function() {
+		  canvas.attr('width', window.innerWidth);
+		  canvas.attr('height', window.innerHeight);
+	 }).resize();
+
 	 canvas.bind('mousedown', startDrawing);
 	 canvas.bind('mouseup', stopDrawing);
 	 canvas.bind('mousemove', doDrawing);
