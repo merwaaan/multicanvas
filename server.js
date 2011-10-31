@@ -3,15 +3,9 @@ var io = require('socket.io').listen(app);
 
 app.listen(8080);
 
-app.get('/', function(req, res) {
-		res.sendfile(__dirname + '/index.html');
-});
-app.get('/client.js', function(req, res) {
-		res.sendfile(__dirname + '/client.js');
-});
-app.get('/jquery.js', function(req, res) {
-		res.sendfile(__dirname + '/jquery.js');
-});
+serve('/', '/index.html');
+serve('/client.js');
+serve('/jquery.js');
 
 io.sockets.on('connection', function(socket) {
 
@@ -51,4 +45,10 @@ var hues = {};
 function randomHue() {
 
 		return Math.floor(Math.random() * 360);
+}
+
+function serve(path, file) {
+	app.get(path, function(req, res) {
+		res.sendfile(__dirname + (file || path));
+	});
 }
