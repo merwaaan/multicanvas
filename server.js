@@ -7,6 +7,7 @@ serve('/', '/index.html');
 serve('/client.js');
 serve('/jquery.js');
 
+io.set('log level', 1);
 io.sockets.on('connection', function(socket) {
 
 		// Attribue une teinte au nouvel utilisateur.
