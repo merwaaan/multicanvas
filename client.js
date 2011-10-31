@@ -58,7 +58,11 @@ function init() {
 		canvas.attr('height', document.height);
 
 		ctxt = canvas[0].getContext('2d');
-		ctxt.lineWidth = 10;
+	ctxt.lineWidth = 10;
+
+	ctxt.lineJoin = 'round';
+	ctxt.lineCap = 'round';
+
 }
 
 function startDrawing(event) {
@@ -94,13 +98,7 @@ function doDrawing(event) {
 		path.push([x, y]);
 
 		if(lastPoint !== null) {
-
-				ctxt.strokeStyle = 'hsl(' + myHue + ',100%,50%)';
-
-				ctxt.beginPath();
-				ctxt.moveTo(lastPoint.x, lastPoint.y);
-				ctxt.lineTo(x, y);
-				ctxt.stroke();
+			draw(path.slice(path.length-2), myHue);
 		}
 
 		lastPoint.x = x;
@@ -109,7 +107,7 @@ function doDrawing(event) {
 
 function draw(path, hue) {
 
-		ctxt.strokeStyle = 'hsl(' + hue + ',100%,50%)';
+		ctxt.strokeStyle = 'hsl(' + hue + ',60%,50%)';
 		console.log(hue);
 
 		ctxt.beginPath();
