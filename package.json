@@ -3,9 +3,9 @@
 	"version": "1.0.0",
 	"description": "Multi-user canvas drawing using WebSocket",
 	"author": "Merwan Achibet",
-	"contributors": {
-		"name": "fmdkdd"
-	},
+	"contributors": [
+		"fmdkdd <fmdkdd@gmail.com> (http://fmdkdd.github.com/)"
+	],
 
 	"repository": {
 		"type": "git",
@@ -13,7 +13,7 @@
 	},
 
 	"engines": {
-		"node": "*"
+		"node": "0.4.x"
 	},
 
 	"dependencies": {
