@@ -74,7 +74,7 @@ function startDrawing(event) {
 
 	 drawing = true;
 
-	 lastPoint = {x: event.clientX, y: event.clientY};
+	 lastPoint = {x: event.pageX, y: event.pageY};
 }
 
 function stopDrawing(event) {
