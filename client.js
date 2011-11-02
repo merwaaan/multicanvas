@@ -89,7 +89,7 @@ function doDrawing(event) {
 	 if(!drawing)
 		  return;
 
-	 var currentPoint = {x: event.clientX, y: event.clientY};
+	 var currentPoint = {x: event.pageX, y: event.pageY};
 
 	 var path = [
 		  [lastPoint.x, lastPoint.y],
