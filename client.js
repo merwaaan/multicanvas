@@ -1,11 +1,10 @@
+// Le socket qui permettra de communiquer avec le serveur.
 var socket = null;
-
-// Booléen valant vrai quand un tracé est en cours.
-var drawing = false;
 
 // Dernière position visitée par le curseur.
 var lastPoint = null;
 
+// Le canvas HTML et son contexte 2D.
 var canvas = null;
 var ctxt = null;
 
@@ -17,110 +16,136 @@ var otherHues = {};
 
 function init() {
 
-	 socket = io.connect();
+	canvas = $('canvas');
+	ctxt = canvas[0].getContext('2d');
 
-	 socket.on('connected', function(data) {
+	// Le canvas remplit entièrement la fenêtre.
+	$(window).resize(function() {
+		canvas.attr('width', window.innerWidth);
+		canvas.attr('height', window.innerHeight);
 
-		  myHue = data.myHue;
-		  otherHues = data.otherHues;
+		setupContext();
+	}).resize();
 
-		  console.log('Connected with hue ' + myHue);
-	 });
+	// Attribution des callbacks évenementiels.
+	canvas.bind('mousedown', startDrawing);
+	canvas.bind('mouseup', stopDrawing);
 
-	 socket.on('user joins', function(data) {
+	// Initialisation du socket.
+	socket = io.connect();
 
-		  var userId = data.id;
-		  var userHue = data.hue;
+	/**
+	 * Connexion au serveur.
+	 *
+	 * - Récupération de notre teinte.
+	 * - Récupération des teintes des autres clients déjà connectés.
+	 */
+	socket.on('connected', function(data) {
 
-		  otherHues[userId] = userHue;
+		myHue = data.myHue;
+		otherHues = data.otherHues;
+		console.log('Connected with hue ' + myHue);
+	});
 
-		  console.log('User ' + userId + ' joined with hue ' + userHue);
-	 });
+	/**
+	 * Arrivée d'un nouvel utilisateur.
+	 *
+	 * - Récupération de sa teinte.
+	 */
+	socket.on('user joins', function(data) {
 
-	 socket.on('user leaves', function(data) {
+		otherHues[data.id] = data.hue;
+		console.log('User ' + data.id + ' joined with hue ' + data.hue);
+	});
 
-		  var userId = data.id;
+	/**
+	 * Départ d'un utilisateur.
+	 *
+	 * - Suppression locale de sa teinte.
+	 */
+	socket.on('user leaves', function(data) {
 
-		  delete otherHues[userId];
+		delete otherHues[data.id];
+		console.log('User ' + data.id + ' leaved');
+	});
 
-		  console.log('User ' + userId + ' leaved');
-	 });
-
-	 socket.on('user draws', function(data) {
-
-		  var userId = data.id;
-
-		  draw(data.path, otherHues[userId]);
-	 });
-
-	 canvas = $('canvas');
-
-	 $(window).resize(function() {
-		  canvas.attr('width', window.innerWidth);
-		  canvas.attr('height', window.innerHeight);
-	 }).resize();
-
-	 canvas.bind('mousedown', startDrawing);
-	 canvas.bind('mouseup', stopDrawing);
-	 canvas.bind('mousemove', doDrawing);
-
-	 ctxt = canvas[0].getContext('2d');
-	 ctxt.lineWidth = 10;
-	 ctxt.lineJoin = 'round';
-	 ctxt.lineCap = 'round';
+	/**
+	 * Un utilisateur dessine un segment.
+	 *
+	 * - Dessiner le segment sur le canvas local.
+	 */
+	socket.on('user draws', function(data) {
+		console.log(data);
+		drawSegment(data.p1, data.p2, otherHues[data.id]);
+	});
 }
 
 function startDrawing(event) {
 
-	 drawing = true;
+	canvas.bind('mousemove', doDrawing);
 
-	 lastPoint = {x: event.pageX, y: event.pageY};
+	lastPoint = {x: event.pageX, y: event.pageY};
 }
 
 function stopDrawing(event) {
 
-	 drawing = false;
-
-	 lastPoint = null;
+	canvas.unbind('mousemove');
 }
 
 function doDrawing(event) {
 
-	 if(!drawing)
-		  return;
+	// Enregistre la position actuelle de la souris.
+	var currentPoint = {x: event.pageX, y: event.pageY};
 
-	 var currentPoint = {x: event.pageX, y: event.pageY};
+	// Dessine le segment entre la position actuelle et la précedente.
+	drawSegment(lastPoint, currentPoint, myHue);
 
-	 var path = [
-		  [lastPoint.x, lastPoint.y],
-		  [currentPoint.x, currentPoint.y]
-	 ];
+	// Envoie les coordonnées aux autres clients.
+	socket.emit('user draws', {
+		p1: lastPoint,
+		p2: currentPoint
+	});
 
-	 // Dessine le tracé.
-	 draw(path, myHue);
-
-	 // Envoie le tracé aux autres clients.
-	 socket.emit('user draws', {
-		  path: path
-	 });
-
-	 lastPoint = currentPoint;
+	lastPoint = currentPoint;
 }
 
-function draw(path, hue) {
+/**
+ * Dessine un segment reliant la position 'p1' à la position 'p2'
+ * de teinte 'hue'.
+ *
+ * - p1: point de départ (objet contenant les attributs x et y),
+ * - p2: point d'arrivée (idem),
+ * - hue: teinte du segment.
+ */
+function drawSegment(p1, p2, hue) {
 
-	 ctxt.strokeStyle = 'hsl(' + hue + ',60%,50%)';
+	// Change la couleur de tracé du canvas.
+	ctxt.strokeStyle = 'hsl(' + hue + ',60%,50%)';
 
-	 ctxt.beginPath();
-	 ctxt.moveTo(path[0][0], path[0][1]);
+	// trace un segment entre les deux positions.
+	ctxt.beginPath();
+	ctxt.moveTo(p1.x, p1.y);
+	ctxt.lineTo(p2.x, p2.y);
+	ctxt.stroke();
+}
 
-	 for(var i = 1; i < path.length; ++i)
-		  ctxt.lineTo(path[i][0], path[i][1]);
+/**
+ * Paramétrage du contexte 2D du canvas.
+ *
+ * - Epaisseur du tracé à 10,
+ * - Extrémités de lignes rondes,
+ * - Liaisons entre segments rondes.
+ *
+ * (Cherchez les nom des attributs sur http://simon.html5.org/dump/html5-canvas-cheat-sheet.html)
+ */
+function setupContext() {
 
-	 ctxt.stroke();
+	ctxt.lineWidth = 10;
+	ctxt.lineJoin = 'round';
+	ctxt.lineCap = 'round';
 }
 
 $(function() {
 
-	 init();
+	init();
 });
