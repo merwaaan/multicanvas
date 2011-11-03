@@ -1,17 +1,18 @@
 // Le socket qui permettra de communiquer avec le serveur.
 var socket = null;
 
-// Dernière position visitée par le curseur.
+// Dernière position visitée par le curseur, contient deux attributs x
+// et y. Exemple: {x: 120, y: 23}
 var lastPoint = null;
 
 // Le canvas HTML et son contexte 2D.
 var canvas = null;
 var ctxt = null;
 
-// Teinte locale.
+// Teinte du client local.
 var myHue = null;
 
-// Teintes de tous les autres clients.
+// Teintes des clients distants, sous la forme 'id: teinte'.
 var otherHues = {};
 
 function init() {
@@ -84,6 +85,7 @@ function startDrawing(event) {
 
 	canvas.bind('mousemove', doDrawing);
 
+	// Enregistre la position de la souris.
 	lastPoint = {x: event.pageX, y: event.pageY};
 }
 
@@ -100,7 +102,7 @@ function doDrawing(event) {
 	// Dessine le segment entre la position actuelle et la précedente.
 	drawSegment(lastPoint, currentPoint, myHue);
 
-	// Envoie les coordonnées aux autres clients.
+	// Envoie les coordonnées du nouveau segment aux autres clients.
 	socket.emit('user draws', {
 		p1: lastPoint,
 		p2: currentPoint
