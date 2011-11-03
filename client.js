@@ -43,9 +43,7 @@ function init() {
 	 */
 	socket.on('connected', function(data) {
 
-		myHue = data.myHue;
-		otherHues = data.otherHues;
-		console.log('Connected with hue ' + myHue);
+		// ???
 	});
 
 	/**
@@ -55,8 +53,7 @@ function init() {
 	 */
 	socket.on('user joins', function(data) {
 
-		otherHues[data.id] = data.hue;
-		console.log('User ' + data.id + ' joined with hue ' + data.hue);
+		// ???
 	});
 
 	/**
@@ -66,8 +63,7 @@ function init() {
 	 */
 	socket.on('user leaves', function(data) {
 
-		delete otherHues[data.id];
-		console.log('User ' + data.id + ' leaved');
+		// ???
 	});
 
 	/**
@@ -76,8 +72,8 @@ function init() {
 	 * - Dessiner le segment sur le canvas local.
 	 */
 	socket.on('user draws', function(data) {
-		console.log(data);
-		drawSegment(data.p1, data.p2, otherHues[data.id]);
+
+		// ???
 	});
 }
 
@@ -97,18 +93,15 @@ function stopDrawing(event) {
 function doDrawing(event) {
 
 	// Enregistre la position actuelle de la souris.
-	var currentPoint = {x: event.pageX, y: event.pageY};
+	// ???
 
 	// Dessine le segment entre la position actuelle et la précedente.
-	drawSegment(lastPoint, currentPoint, myHue);
+	// ???
 
 	// Envoie les coordonnées du nouveau segment aux autres clients.
 	socket.emit('user draws', {
-		p1: lastPoint,
-		p2: currentPoint
+		// ???
 	});
-
-	lastPoint = currentPoint;
 }
 
 /**
@@ -122,13 +115,10 @@ function doDrawing(event) {
 function drawSegment(p1, p2, hue) {
 
 	// Change la couleur de tracé du canvas.
-	ctxt.strokeStyle = 'hsl(' + hue + ',60%,50%)';
+	// ???
 
 	// trace un segment entre les deux positions.
-	ctxt.beginPath();
-	ctxt.moveTo(p1.x, p1.y);
-	ctxt.lineTo(p2.x, p2.y);
-	ctxt.stroke();
+	// ???
 }
 
 /**
@@ -142,9 +132,9 @@ function drawSegment(p1, p2, hue) {
  */
 function setupContext() {
 
-	ctxt.lineWidth = 10;
-	ctxt.lineJoin = 'round';
-	ctxt.lineCap = 'round';
+	// ctxt.??? = ???;
+	// ctxt.??? = ???;
+	// ctxt.??? = ???;
 }
 
 $(function() {

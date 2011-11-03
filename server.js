@@ -22,33 +22,34 @@ io.set('log level', 1);
  */
 io.sockets.on('connection', function(socket) {
 
-	var hue = randomHue();
+	// Attribution d'une teinte aléatoire.
+	// ???
 
+	// Transmission de la teinte du client et de celles des autres.
 	socket.emit('connected', {
-		myHue: hue,
-		otherHues: hues
+		// ???,
+		// ???
 	});
 
+	// Broadcast des infos du nouveaux clients aux autres.
 	socket.broadcast.emit('user joins', {
-		id: socket.id,
-		hue: hue
+		// ???,
+		// ???
 	});
-
-	hues[socket.id] = hue;
 
 	socket.on('user draws', function(data) {
 
 		socket.broadcast.emit('user draws', {
-			id: socket.id,
-			p1: data.p1,
-			p2: data.p2
+			// ???,
+			// ???,
+			// ???
 		});
 	});
 
 	socket.on('disconnect', function(data) {
 
 		socket.broadcast.emit('user leaves', {
-			id: socket.id
+			// ???
 		});
 	});
 });
