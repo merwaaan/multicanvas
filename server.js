@@ -16,7 +16,7 @@ io.set('log level', 1);
  * - On lui attribue une teinte choisie aléatoirement.
  * - On lui communique sa teinte.
  * - On broadcast sa teinte et son identifiant aux autres clients.
- * - On spécifie les callbacks des deux évenements restants:
+ * - On spécifie les callbacks des deux événements restants:
  *     - L'utilisateur dessine.
  *     - L'utilisateur se déconnecte.
  */
@@ -67,7 +67,7 @@ io.sockets.on('connection', function(socket) {
 var hues = {};
 
 /**
- * Retourne une teinte chosie aléatoirement (0 <= h < 360).
+ * Retourne une teinte choisie aléatoirement (0 <= h < 360).
  */
 function randomHue() {
 

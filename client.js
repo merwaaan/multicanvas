@@ -28,7 +28,7 @@ function init() {
 		setupContext();
 	}).resize();
 
-	// Attribution des callbacks évenementiels.
+	// Attribution des callbacks événementiels.
 	canvas.bind('mousedown', startDrawing);
 	canvas.bind('mouseup', stopDrawing);
 
@@ -99,7 +99,7 @@ function doDrawing(event) {
 	// Enregistre la position actuelle de la souris.
 	var currentPoint = {x: event.pageX, y: event.pageY};
 
-	// Dessine le segment entre la position actuelle et la précedente.
+	// Dessine le segment entre la position actuelle et la précédente.
 	drawSegment(lastPoint, currentPoint, myHue);
 
 	// Envoie les coordonnées du nouveau segment aux autres clients.
@@ -134,7 +134,7 @@ function drawSegment(p1, p2, hue) {
 /**
  * Paramétrage du contexte 2D du canvas.
  *
- * - Epaisseur du tracé à 10,
+ * - Épaisseur du tracé à 10,
  * - Extrémités de lignes rondes,
  *
  * (Cherchez les nom des attributs sur http://simon.html5.org/dump/html5-canvas-cheat-sheet.html)
