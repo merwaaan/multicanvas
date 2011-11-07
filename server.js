@@ -16,7 +16,7 @@ io.set('log level', 1);
  * - On lui attribue une teinte choisie aléatoirement.
  * - On lui communique sa teinte.
  * - On broadcast sa teinte et son identifiant aux autres clients.
- * - On spécifie les callbacks des deux évenements restants:
+ * - On spécifie les callbacks des deux événements restants:
  *     - L'utilisateur dessine.
  *     - L'utilisateur se déconnecte.
  */
@@ -31,7 +31,7 @@ io.sockets.on('connection', function(socket) {
 		// ???
 	});
 
-	// Broadcast des infos du nouveaux clients aux autres.
+	// Broadcast des infos du nouveau client aux autres.
 	socket.broadcast.emit('user joins', {
 		// ???,
 		// ???
@@ -39,6 +39,7 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('user draws', function(data) {
 
+		// Broadcast du segment passé à tous les autres clients.
 		socket.broadcast.emit('user draws', {
 			// ???,
 			// ???,
@@ -48,6 +49,7 @@ io.sockets.on('connection', function(socket) {
 
 	socket.on('disconnect', function(data) {
 
+		// Broadcast l'identifiant du client aux autres.
 		socket.broadcast.emit('user leaves', {
 			// ???
 		});
@@ -68,7 +70,7 @@ io.sockets.on('connection', function(socket) {
 var hues = {};
 
 /**
- * Retourne une teinte chosie aléatoirement (0 <= h < 360).
+ * Retourne une teinte choisie aléatoirement (0 <= h < 360).
  */
 function randomHue() {
 
