@@ -136,14 +136,12 @@ function drawSegment(p1, p2, hue) {
  *
  * - Epaisseur du tracé à 10,
  * - Extrémités de lignes rondes,
- * - Liaisons entre segments rondes.
  *
  * (Cherchez les nom des attributs sur http://simon.html5.org/dump/html5-canvas-cheat-sheet.html)
  */
 function setupContext() {
 
 	ctxt.lineWidth = 10;
-	ctxt.lineJoin = 'round';
 	ctxt.lineCap = 'round';
 }
 
