@@ -12,9 +12,6 @@ var ctxt = null;
 // Teinte du client local.
 var myHue = null;
 
-// Teintes des clients distants, sous la forme 'id: teinte'.
-var otherHues = {};
-
 function init() {
 
 	canvas = $('canvas');
@@ -32,43 +29,11 @@ function init() {
 	canvas.bind('mousedown', startDrawing);
 	canvas.bind('mouseup', stopDrawing);
 
+	// Notre teinte choise aléatoirement.
+	myHue = randomHue();
+
 	// Initialisation du socket.
 	socket = io.connect();
-
-	/**
-	 * Connexion au serveur.
-	 *
-	 * - Récupération de notre teinte.
-	 * - Récupération des teintes des autres clients déjà connectés.
-	 */
-	socket.on('connected', function(data) {
-
-		myHue = data.myHue;
-		otherHues = data.otherHues;
-		console.log('Connected with hue ' + myHue);
-	});
-
-	/**
-	 * Arrivée d'un nouvel utilisateur.
-	 *
-	 * - Récupération de sa teinte.
-	 */
-	socket.on('user joins', function(data) {
-
-		otherHues[data.id] = data.hue;
-		console.log('User ' + data.id + ' joined with hue ' + data.hue);
-	});
-
-	/**
-	 * Départ d'un utilisateur.
-	 *
-	 * - Suppression locale de sa teinte.
-	 */
-	socket.on('user leaves', function(data) {
-
-		delete otherHues[data.id];
-		console.log('User ' + data.id + ' leaved');
-	});
 
 	/**
 	 * Un utilisateur dessine un segment.
@@ -77,7 +42,7 @@ function init() {
 	 */
 	socket.on('user draws', function(data) {
 		console.log(data);
-		drawSegment(data.p1, data.p2, otherHues[data.id]);
+		drawSegment(data.p1, data.p2, data.hue);
 	});
 }
 
@@ -104,6 +69,7 @@ function doDrawing(event) {
 
 	// Envoie les coordonnées du nouveau segment aux autres clients.
 	socket.emit('user draws', {
+		hue: myHue,
 		p1: lastPoint,
 		p2: currentPoint
 	});
@@ -122,7 +88,7 @@ function doDrawing(event) {
 function drawSegment(p1, p2, hue) {
 
 	// Change la couleur de tracé du canvas.
-	ctxt.strokeStyle = 'hsl(' + hue + ',60%,50%)';
+	ctxt.strokeStyle = hueToHSL(hue);
 
 	// trace un segment entre les deux positions.
 	ctxt.beginPath();
@@ -143,6 +109,22 @@ function setupContext() {
 
 	ctxt.lineWidth = 10;
 	ctxt.lineCap = 'round';
+}
+
+/**
+ * Retourne une teinte choisie aléatoirement (0 <= h < 360).
+ */
+function randomHue() {
+
+	return Math.floor(Math.random() * 360);
+}
+
+/**
+ * Retourne la couleur CSS spécifiée par la teinte dans le modèle HSL.
+ */
+function hueToHSL(hue) {
+
+	return 'hsl(' + hue + ', 60%, 50%)';
 }
 
 $(function() {

@@ -13,66 +13,14 @@ io.set('log level', 1);
 /**
  * Connexion d'un nouveau client.
  *
- * - On lui attribue une teinte choisie aléatoirement.
- * - On lui communique sa teinte.
- * - On broadcast sa teinte et son identifiant aux autres clients.
- * - On spécifie les callbacks des deux événements restants:
- *     - L'utilisateur dessine.
- *     - L'utilisateur se déconnecte.
+ * - On transmet l'événement 'user draws' aux autres clients
  */
 io.sockets.on('connection', function(socket) {
 
-	var hue = randomHue();
-
-	socket.emit('connected', {
-		myHue: hue,
-		otherHues: hues
-	});
-
-	socket.broadcast.emit('user joins', {
-		id: socket.id,
-		hue: hue
-	});
-
-	hues[socket.id] = hue;
-
 	socket.on('user draws', function(data) {
-
-		socket.broadcast.emit('user draws', {
-			id: socket.id,
-			p1: data.p1,
-			p2: data.p2
-		});
-	});
-
-	socket.on('disconnect', function(data) {
-
-		socket.broadcast.emit('user leaves', {
-			id: socket.id
-		});
+		socket.broadcast.emit('user draws', data);
 	});
 });
-
-/**
- * Map des teintes de tous les clients connectés, sous la
- * forme 'id: teinte'.
- *
- * Exemple:
- * {
- *   453452332: 124,
- *   576578474: 90,
- *   239827329: 307
- * }
- */
-var hues = {};
-
-/**
- * Retourne une teinte choisie aléatoirement (0 <= h < 360).
- */
-function randomHue() {
-
-	return Math.floor(Math.random() * 360);
-}
 
 function serve(path, file) {
 	app.get(path, function(req, res) {
