@@ -68,11 +68,13 @@ function doDrawing(event) {
 	drawSegment(lastPoint, currentPoint, myHue);
 
 	// Envoie les coordonnées du nouveau segment aux autres clients.
-	socket.emit('user draws', {
+	var data = {
 		hue: myHue,
 		p1: lastPoint,
 		p2: currentPoint
-	});
+	};
+
+	socket.emit('user draws', data);
 
 	lastPoint = currentPoint;
 }
